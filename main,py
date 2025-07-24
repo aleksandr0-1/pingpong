@@ -1,0 +1,124 @@
+import time
+import pygame as pg
+from random import randint
+pg.init()
+
+GREEN = (0, 255, 0)
+
+WIN_SIZE = (800, 600)
+x , y = 0, 1
+
+missed = 0
+points = 0
+
+
+class BaseSprite(pg.sprite.Sprite):
+    def __init__(self, filename, x, y, w, h, speed_x=0, speed_y=0):
+        super().__init__()
+        self.rect = pg.Rect(x, y, w, h)
+        self.image = pg.transform.scale(pg.image.load(filename), (w, h))
+        self.speed_x = speed_x
+        self.speed_y = speed_y
+
+    def draw(self):
+        mw.blit(self.image, (self.rect.x, self.rect.y))
+
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+
+
+    
+
+class Rocket(BaseSprite):
+
+    
+
+
+    def update_l(self):
+
+        keys = pg.key.get_pressed()
+        
+        if keys[pg.K_DOWN]:
+            self.rect.y += self.speed_y
+            if self.rect.y > 520:
+                self.rect.y = 520
+        if keys[pg.K_UP]:
+            self.rect.y -= self.speed_y
+            if self.rect.y < 0:
+                self.rect.y = 0
+
+    def update_r(self):
+ 
+        keys = pg.key.get_pressed()
+       
+        if keys[pg.K_s]:
+            self.rect.y += self.speed_y
+            if self.rect.y > 520:
+                self.rect.y = 520
+        if keys[pg.K_w]:
+            self.rect.y -= self.speed_y
+            if self.rect.y < 0:
+                self.rect.y = 0       
+
+
+def set_text(text, x, y, color=(255,255,200)):
+    mw.blit(
+        font1.render(text, True, color),(x,y)
+    )
+
+
+#mw = pg.display.set_mode(WIN_SIZE, pg.FULLSCREEN)
+mw = pg.display.set_mode(WIN_SIZE)
+pg.display.set_caption('Пинг понг')
+clock = pg.time.Clock()
+
+
+
+
+
+fon = pg.image.load("pingpongfon.jpg")
+fon = pg.transform.scale(fon, WIN_SIZE)
+
+rocket_left = Rocket('ping_rocket1.png', 10, 200, 15, 100, 0, 5)
+rocket_right = Rocket('ping_rocket1.png', 775, 400, 15, 100, 0, 5)
+
+ball = BaseSprite('ball2.png', 450, 350, 50, 50, 3, 3)
+
+play = True
+game = True
+
+ticks = 0
+
+while game:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            game = False
+
+    if game:
+        
+        mw.blit(fon, (0,0))
+
+        rocket_left.update_l()
+        rocket_left.draw()
+
+        rocket_right.update_r()
+        rocket_right.draw()
+
+        ball.update()
+        ball.draw()
+
+        if ball.rect.y > 550 or ball.rect.y < 0:
+            ball.speed_y *= -1
+
+        if ball.rect.colliderect(rocket_left.rect) or  ball.rect.colliderect(rocket_right.rect):
+            ball.speed_x *= -1
+
+        if ball.rect.x > 800 or ball.rect.x < 0:
+            game = False
+    
+        
+    pg.display.update()
+    clock.tick(60)
+    ticks += 1
+   
